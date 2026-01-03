@@ -1,9 +1,9 @@
 let savedItems = JSON.parse(localStorage.getItem('koreaGluttonySaved')) || [];
+let customRestaurants = JSON.parse(localStorage.getItem('koreaCustomRestaurants')) || {};
 let currentFilter = 'all';
 
 const grid = document.getElementById('food-grid');
 const emptyState = document.getElementById('empty-state');
-const searchInput = document.getElementById('search-input');
 const badgeCount = document.getElementById('badge-count');
 const plateList = document.getElementById('plate-list');
 
@@ -32,6 +32,17 @@ function renderGrid(data) {
         for (let i = 1; i <= 5; i++) {
             starsHtml += `<i class="fa-solid fa-star text-[10px] ${i <= item.pop ? 'text-amber-400' : 'text-stone-200'}"></i>`;
         }
+
+        const categoryMap = {
+            'meat': '肉食',
+            'soup': '汤类',
+            'noodle': '面食',
+            'street': '小吃',
+            'cafe': '咖啡',
+            'drink': '下酒',
+            'store': '便利店',
+            'canteen': '餐厅'
+        };
 
         card.innerHTML = `
             <div class="space-y-4">
@@ -74,7 +85,7 @@ function renderGrid(data) {
                 </div>
             </div>
 
-            <div class="mt-6 pt-4 grid grid-cols-3 gap-2">
+            <div class="mt-6 pt-4 grid grid-cols-4 gap-2">
                 <button onclick="copyText('${item.kr}', '韩文名已复制')" class="flex flex-col items-center justify-center gap-1 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl transition-colors">
                     <i class="fa-regular fa-copy text-sm"></i>
                     <span class="text-[10px] font-black">复制韩文</span>
@@ -87,9 +98,12 @@ function renderGrid(data) {
                     <i class="fa-solid fa-map-location-dot text-sm"></i>
                     <span class="text-[10px] font-black">Naver</span>
                 </a>
+                <button onclick="showRestaurants(${item.id})" class="flex flex-col items-center justify-center gap-1 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-colors">
+                    <i class="fa-solid fa-store text-sm"></i>
+                    <span class="text-[10px] font-black">推荐餐厅</span>
+                </button>
             </div>
         `;
-        // Cache-busting update: v1.1
         grid.appendChild(card);
     });
 }
@@ -109,15 +123,9 @@ function filterItems(category) {
 }
 
 function applyFilters() {
-    const term = searchInput.value.toLowerCase();
     const filtered = rawData.filter(item => {
         const matchesCategory = currentFilter === 'all' || item.category === currentFilter;
-        const matchesSearch =
-            item.cn.toLowerCase().includes(term) ||
-            item.kr.toLowerCase().includes(term) ||
-            item.en.toLowerCase().includes(term) ||
-            item.desc.toLowerCase().includes(term);
-        return matchesCategory && matchesSearch;
+        return matchesCategory;
     });
 
     // Always sort by popularity descending
@@ -139,7 +147,6 @@ function debounce(func, wait) {
 }
 
 const debouncedApplyFilters = debounce(applyFilters, 300);
-searchInput.addEventListener('input', debouncedApplyFilters);
 
 
 function copyText(text, msg) {
@@ -229,3 +236,101 @@ function renderSavedList() {
         plateList.appendChild(el);
     });
 }
+
+// 显示推荐餐厅模态框
+function showRestaurants(itemId) {
+    const item = rawData.find(i => i.id === itemId);
+    if (!item) return;
+
+    const modal = document.getElementById('restaurant-modal');
+    const modalTitle = document.getElementById('restaurant-modal-title');
+    const modalContent = document.getElementById('restaurant-modal-content');
+
+    modalTitle.innerHTML = `<i class="fa-solid fa-store"></i> ${item.cn} 推荐餐厅`;
+
+    // 优先使用用户自定义数据，其次使用默认数据
+    const restaurants = customRestaurants[itemId] || item.restaurants || [
+        { rank: 1, name: '', area: '', note: '', link: '' },
+        { rank: 2, name: '', area: '', note: '', link: '' },
+        { rank: 3, name: '', area: '', note: '', link: '' },
+        { rank: 4, name: '', area: '', note: '', link: '' },
+        { rank: 5, name: '', area: '', note: '', link: '' }
+    ];
+
+    modalContent.innerHTML = `
+        <form id="restaurant-form" class="space-y-4">
+            ${restaurants.map((r, idx) => `
+                <div class="bg-stone-50 rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black shrink-0
+                            ${idx === 0 ? 'bg-amber-400 text-white' : idx === 1 ? 'bg-stone-400 text-white' : idx === 2 ? 'bg-amber-600 text-white' : 'bg-stone-200 text-stone-600'}">
+                            ${idx + 1}
+                        </span>
+                        <input type="text" name="name-${idx}" value="${r.name || ''}" placeholder="餐厅名称"
+                            class="flex-1 px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    </div>
+                    <div class="ml-11 grid grid-cols-2 gap-2">
+                        <input type="text" name="area-${idx}" value="${r.area || ''}" placeholder="📍 所在区域"
+                            class="px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300">
+                        <input type="text" name="link-${idx}" value="${r.link || ''}" placeholder="🔗 地图链接(可选)"
+                            class="px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    </div>
+                    <div class="ml-11">
+                        <input type="text" name="note-${idx}" value="${r.note || ''}" placeholder="💬 推荐理由"
+                            class="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    </div>
+                </div>
+            `).join('')}
+            <div class="flex gap-3 pt-4">
+                <button type="button" onclick="closeRestaurantModal()" 
+                    class="flex-1 py-3 bg-stone-200 text-stone-700 rounded-2xl font-bold hover:bg-stone-300 transition-colors">
+                    取消
+                </button>
+                <button type="submit" 
+                    class="flex-1 py-3 bg-rose-500 text-white rounded-2xl font-bold hover:bg-rose-600 transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-save"></i> 保存
+                </button>
+            </div>
+        </form>
+    `;
+
+    // 绑定表单提交事件
+    document.getElementById('restaurant-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveRestaurants(itemId);
+    });
+
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+// 保存餐厅数据
+function saveRestaurants(itemId) {
+    const form = document.getElementById('restaurant-form');
+    const restaurants = [];
+
+    for (let i = 0; i < 5; i++) {
+        restaurants.push({
+            rank: i + 1,
+            name: form.querySelector(`[name="name-${i}"]`).value.trim(),
+            area: form.querySelector(`[name="area-${i}"]`).value.trim(),
+            note: form.querySelector(`[name="note-${i}"]`).value.trim(),
+            link: form.querySelector(`[name="link-${i}"]`).value.trim()
+        });
+    }
+
+    // 保存到 localStorage
+    customRestaurants[itemId] = restaurants;
+    localStorage.setItem('koreaCustomRestaurants', JSON.stringify(customRestaurants));
+
+    closeRestaurantModal();
+    showToast('餐厅推荐已保存！');
+}
+
+// 关闭餐厅模态框
+function closeRestaurantModal() {
+    const modal = document.getElementById('restaurant-modal');
+    modal.classList.remove('show');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+

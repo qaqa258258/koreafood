@@ -103,21 +103,6 @@
                 <button onclick="filterItems('street')"
                     class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
                     data-filter="street">🍢 街头小吃</button>
-                <button onclick="filterItems('drink')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="drink">🍺 适合喝一杯</button>
-                <button onclick="filterItems('store')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="store">🏪 便利店寻宝</button>
-            </div>
-
-            <!-- Search Bar & View Toggle -->
-            <div class="max-w-4xl mx-auto mt-6 flex flex-col md:flex-row gap-4 items-center">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-stone-400"><i
-                        class="fa-solid fa-magnifying-glass"></i></span>
-                <input type="text" id="search-input" placeholder="搜索中文、韩文或吐槽关键词..." aria-label="搜索美食"
-                    class="w-full py-3 pl-12 pr-4 bg-white border border-stone-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-sm transition-all">
-            </div>
         </section>
 
         <!-- Food Grid -->
@@ -126,7 +111,7 @@
         <!-- Empty State -->
         <div id="empty-state" class="hidden text-center py-20">
             <i class="fa-regular fa-face-surprise text-5xl text-stone-300 mb-4"></i>
-            <p class="text-stone-500 text-lg">没找到这个“密码”... 换个词搜搜？</p>
+            <p class="text-stone-500 text-lg">没找到这个"密码"... 换个词搜搜？</p>
         </div>
     </main>
 
@@ -156,6 +141,28 @@
         class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-stone-800 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-3 hidden">
         <i class="fa-solid fa-check-circle text-green-400"></i>
         <span id="toast-message" class="text-sm font-bold"></span>
+    </div>
+
+    <!-- Restaurant Modal -->
+    <div id="restaurant-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeRestaurantModal()"></div>
+        <div
+            class="restaurant-modal-content relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="p-6 bg-gradient-to-r from-rose-500 to-amber-500 text-white">
+                <div class="flex justify-between items-center">
+                    <h3 id="restaurant-modal-title" class="text-xl font-black flex items-center gap-2">
+                        <i class="fa-solid fa-store"></i> 推荐餐厅
+                    </h3>
+                    <button onclick="closeRestaurantModal()"
+                        class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="restaurant-modal-content" class="flex-1 overflow-y-auto p-6 space-y-3">
+                <!-- 餐厅列表将动态插入 -->
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->

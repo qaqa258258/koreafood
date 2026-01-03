@@ -58,3 +58,57 @@
         display: block !important;
     }
 }
+
+/* Ranking Badge */
+.rank-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid #fcd34d;
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #fef08a 0%, #fbbf24 100%);
+    color: #78350f;
+    border: 1px solid #fcd34d;
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #e5e7eb 0%, #9ca3af 100%);
+    color: #374151;
+    border: 1px solid #f3f4f6;
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
+    color: #7c2d12;
+    border: 1px solid #fdba74;
+}
+
+.rank-other {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+}
+
+/* Restaurant Modal */
+#restaurant-modal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#restaurant-modal.show {
+    opacity: 1;
+}
+
+#restaurant-modal .restaurant-modal-content {
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+#restaurant-modal.show .restaurant-modal-content {
+    transform: scale(1) translateY(0);
+}
