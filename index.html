@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>韩国干饭人通关密码本 (终极暴食版)</title>
-    <meta name="description" content="最全的韩国美食指南，支持中韩英对照、避雷吐槽、一键复制韩文点餐，助你通关韩国美食！">
-    <meta name="keywords" content="韩国美食, 韩国旅游, 韩语点餐, 韩国料理, 韩国餐厅推荐">
-    <meta property="og:title" content="韩国干饭人通关密码本 (终极暴食版)">
-    <meta property="og:description" content="中韩英对照 · 避雷吐槽 · 一键复制 · 暴食专用">
+    <title>全球美食通关密码本</title>
+    <meta name="description" content="全球美食指南，支持多国语言对照、避雷吐槽、一键复制点餐，助你通关全球美食！">
+    <meta name="keywords" content="美食指南, 韩国美食, 日本料理, 意大利菜, 中国菜, 美食推荐">
+    <meta property="og:title" content="全球美食通关密码本">
+    <meta property="og:description" content="多国语言对照 · 避雷吐槽 · 一键复制 · 暴食专用">
     <meta property="og:type" content="website">
-
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,8 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -32,7 +30,7 @@
                     colors: {
                         'food-bg': '#fdfcfb',
                         'food-card': '#ffffff',
-                        'food-accent': '#e11d48', // Rose 600
+                        'food-accent': 'var(--theme-color, #e11d48)',
                         'food-text': '#1c1917',
                     }
                 }
@@ -49,17 +47,28 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-book-open text-food-accent text-xl"></i>
-                    <span class="font-black text-xl tracking-tight">韩国干饭人通关密码本 <span
-                            class="text-xs bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full ml-1">终极暴食版</span></span>
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-utensils text-xl" style="color: var(--theme-color, #e11d48)"></i>
+                    <span id="nav-title" class="font-black text-lg tracking-tight">🇰🇷 全球美食通关密码本</span>
                 </div>
                 <div class="flex items-center gap-4">
+                    <!-- 菜系选择器 -->
+                    <select id="cuisine-selector" onchange="switchCuisine(this.value)"
+                        class="px-4 py-2 bg-stone-100 border-0 rounded-full text-sm font-bold text-stone-700 focus:ring-2 focus:ring-rose-300 cursor-pointer hover:bg-stone-200 transition-colors">
+                        <option value="korea">🇰🇷 韩国料理</option>
+                        <option value="japan">🇯🇵 日本料理</option>
+                        <option value="china">🇨🇳 中国菜</option>
+                        <option value="italy">🇮🇹 意大利料理</option>
+                        <option value="usa">🇺🇸 美式料理</option>
+                        <option value="france">🇫🇷 法式料理</option>
+                        <option value="mexico">🇲🇽 墨西哥料理</option>
+                        <option value="asia">🌴 东南亚料理</option>
+                    </select>
                     <button onclick="toggleMyPlate()" aria-label="查看我的必吃清单"
-                        class="relative p-2 text-stone-600 hover:text-food-accent transition-colors">
+                        class="relative p-2 text-stone-600 hover:text-rose-500 transition-colors">
                         <i class="fa-solid fa-heart text-xl"></i>
                         <span id="badge-count"
-                            class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-food-accent rounded-full hidden">0</span>
+                            class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-rose-500 rounded-full hidden">0</span>
                     </button>
                 </div>
             </div>
@@ -71,38 +80,19 @@
 
         <!-- Header Section -->
         <section class="text-center space-y-4 max-w-3xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-black text-stone-800 tracking-tight">
+            <h1 id="main-title" class="text-4xl md:text-5xl font-black text-stone-800 tracking-tight">
                 🇰🇷 韩国干饭人通关密码本
             </h1>
             <p class="text-lg text-stone-500 font-medium">
-                中韩英对照 · 避雷吐槽 · 一键复制 · 暴食专用
+                多国语言对照 · 避雷吐槽 · 一键复制 · 暴食专用
             </p>
         </section>
 
         <!-- Category Filters -->
         <section class="sticky top-16 z-40 bg-food-bg/95 backdrop-blur-sm py-4 border-b border-stone-100">
             <div class="flex flex-wrap justify-center gap-3" id="filter-container">
-                <button onclick="filterItems('all')"
-                    class="filter-btn active px-5 py-2 rounded-full text-sm font-bold transition-all bg-stone-800 text-white shadow-lg"
-                    data-filter="all">全部</button>
-                <button onclick="filterItems('canteen')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="canteen">🍱 韩式餐厅</button>
-                <button onclick="filterItems('cafe')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="cafe">☕️ 咖啡甜点</button>
-                <button onclick="filterItems('meat')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="meat">🥩 肉食动物</button>
-                <button onclick="filterItems('soup')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="soup">🥘 汤汤水水</button>
-                <button onclick="filterItems('noodle')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="noodle">🍜 面食碳水</button>
-                <button onclick="filterItems('street')"
-                    class="filter-btn px-5 py-2 rounded-full text-sm font-bold transition-all bg-white text-stone-600 border border-stone-200 hover:border-rose-300 hover:text-rose-600"
-                    data-filter="street">🍢 街头小吃</button>
+                <!-- 分类按钮将由JS动态生成 -->
+            </div>
         </section>
 
         <!-- Food Grid -->
@@ -146,8 +136,7 @@
     <!-- Restaurant Modal -->
     <div id="restaurant-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeRestaurantModal()"></div>
-        <div
-            class="restaurant-modal-content relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
+        <div class="restaurant-modal-content relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
             <div class="p-6 bg-gradient-to-r from-rose-500 to-amber-500 text-white">
                 <div class="flex justify-between items-center">
                     <h3 id="restaurant-modal-title" class="text-xl font-black flex items-center gap-2">
